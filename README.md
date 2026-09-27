@@ -11,6 +11,27 @@ npm start
 
 Then open http://localhost:32007
 
+## Example
+
+Input:
+
+> added dark mode, fixed the crash on startup for Windows users, changed the default page size from 10 to 25
+
+Output:
+
+```
+Added
+- Added dark mode
+
+Changed
+- Changed default page size from 10 to 25
+
+Fixed
+- Fixed crash on Windows startup
+```
+
+Each comma-separated change is classified and polished individually (rather than rewritten as one big block) to keep the model from inventing extra, unrelated changes.
+
 ## QVAC SDK version
 
 `@qvac/sdk` ^0.19.0 (see `package.json`).
