@@ -44,6 +44,17 @@ function splitClauses(text) {
     .filter(Boolean);
 }
 
+const SECTION_ORDER = ["Added", "Changed", "Fixed"];
+
+// Shared by both the fully-deterministic path (bucketize) and the
+// per-clause-polished path (generate) so the section ordering/formatting
+// logic only lives in one place instead of being duplicated.
+function formatBuckets(buckets) {
+  return SECTION_ORDER.filter((k) => buckets[k].length > 0)
+    .map((k) => `${k}\n${buckets[k].map((i) => `- ${i}`).join("\n")}`)
+    .join("\n\n");
+}
+
 function bucketize(text, original) {
   const lines = splitClauses(text);
   const source = lines.length > 0 ? lines : splitClauses(original);
@@ -51,11 +62,7 @@ function bucketize(text, original) {
   for (const line of source) {
     buckets[classify(line)].push(line[0].toUpperCase() + line.slice(1));
   }
-  const order = ["Added", "Changed", "Fixed"];
-  return order
-    .filter((k) => buckets[k].length > 0)
-    .map((k) => `${k}\n${buckets[k].map((i) => `- ${i}`).join("\n")}`)
-    .join("\n\n");
+  return formatBuckets(buckets);
 }
 
 function significantWords(text) {
@@ -118,11 +125,5 @@ export async function generate(modelId, changes) {
     buckets[category].push(polished);
   }
 
-  const order = ["Added", "Changed", "Fixed"];
-  const output = order
-    .filter((k) => buckets[k].length > 0)
-    .map((k) => `${k}\n${buckets[k].map((i) => `- ${i}`).join("\n")}`)
-    .join("\n\n");
-
-  return { result: output };
+  return { result: formatBuckets(buckets) };
 }
